@@ -9,7 +9,7 @@
 // @todo: Вывести карточки на страницу
 const cardsList = document.querySelector('.places__list');
 
-function addCard(cardName, cardImgLink) {
+function addCard(cardName, cardImgLink, removeCard) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -26,6 +26,6 @@ function removeCard (event) {
 }
 
 initialCards.forEach( function(item) {
-  addCard(item.name, item.link);
+  addCard(item.name, item.link, removeCard);
 });
 
