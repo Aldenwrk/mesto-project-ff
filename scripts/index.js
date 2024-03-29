@@ -15,12 +15,14 @@ function addCard(cardName, cardImgLink) {
 
   cardElement.querySelector('.card__title').textContent = cardName;
   cardElement.querySelector('.card__image').src = cardImgLink;
-  cardElement.querySelector('.card__delete-button').addEventListener('click', function(event) {
-    const eventTarget = event.target;
-    const parentCard = eventTarget.closest('.card');
-    parentCard.remove();
-  });
+  cardElement.querySelector('.card__delete-button').addEventListener('click', removeCard);
   cardsList.append(cardElement);
+}
+
+function removeCard (event) {
+  const eventTarget = event.target;
+  const parentCard = eventTarget.closest('.card');
+  parentCard.remove();
 }
 
 initialCards.forEach( function(item) {
