@@ -1,6 +1,7 @@
-import { initialCards, addCard, likeToggle, removeCard } from "./scripts/cards.js";
+import { initialCards} from "./scripts/cards.js";
+import { createCard, likeToggle, removeCard } from "./scripts/card.js";
 import './pages/index.css';
-import {closeModal, openModal} from "./scripts/modal.js";
+import {closeModal, openModal, closeOnBackDropClick, closeOnEsc} from "./scripts/modal.js";
 const cardsList = document.querySelector('.places__list');
 //берём данные из картинки при клике
 function popupTypeImageCb(event){
@@ -12,10 +13,10 @@ const popupTypeImage = document.querySelector('.popup_type_image');
 //передаём данные картинки в попап и открываем его
 function popupImageCreation(cardLink, cardName){
   const description = document.querySelector('.popup__caption');
-  const ImageInModal = document.querySelector('.popup__image');
+  const imageInModal = document.querySelector('.popup__image');
   openModal(popupTypeImage);
-  ImageInModal.src = cardLink;
-  ImageInModal.alt = cardName;
+  imageInModal.src = cardLink;
+  imageInModal.alt = cardName;
   description.textContent = cardName;
 };
 
@@ -25,7 +26,7 @@ popups.forEach((popup) => {
 });
 //создаём карточки из массива
 initialCards.forEach( function(cardData) {
-  cardsList.append(addCard(cardData, removeCard, likeToggle, popupTypeImageCb));
+  cardsList.append(createCard(cardData, removeCard, likeToggle, popupTypeImageCb));
 });
 
 const profileAddButton = document.querySelector('.profile__add-button');
@@ -45,51 +46,31 @@ closeBtns.forEach(button =>{
 profileAddButton.addEventListener('click', () => openModal(popupNewCrd));
 profileEditButton.addEventListener('click', () => openModal(popupEdit));
 
-//закрытие по клику вне модалки
+
 popupNewCrd.addEventListener("click", closeOnBackDropClick);
 popupEdit.addEventListener("click", closeOnBackDropClick);
 popupTypeImage.addEventListener("click", closeOnBackDropClick);
 
-function closeOnBackDropClick({ currentTarget, target }) {
-  const dialogElement = currentTarget
-  const isClickedOnBackDrop = target === dialogElement
-  if (isClickedOnBackDrop) {
-   closeModal(dialogElement);
-  }
-}
-
-//закрытие по Esc
-document.addEventListener("keydown", closeOnEsc);
-
-function closeOnEsc(event){
-  if(event.key === "Escape" ){
-    const openedModal = document.querySelector('.popup_is-opened');
-    if(openedModal){
-      closeModal(openedModal);
-    }
-  }
-};
-
-const formElement = document.forms['edit-profile'];
-const nameInput = formElement.elements['name'];
-const jobInput = formElement.elements['description'];
+const profileEditFormElement = document.forms['edit-profile'];
+const nameInput = profileEditFormElement.elements['name'];
+const jobInput = profileEditFormElement.elements['description'];
 
 // Обработчик «отправки» формы с новыми данными профиля
-function handleFormSubmit(evt) {
+function profileEditFormSubmit(evt) {
     evt.preventDefault(); 
     let profileName = document.querySelector('.profile__title');
     profileName.textContent = nameInput.value;
     let profileDescr = document.querySelector('.profile__description');
     profileDescr.textContent = jobInput.value;
 
-    formElement.reset();
+    profileEditFormElement.reset();
     const openedModal = document.querySelector('.popup_is-opened');
     if(openedModal){
       closeModal(openedModal);
     }
 }
 
-formElement.addEventListener('submit', handleFormSubmit);
+profileEditFormElement.addEventListener('submit', profileEditFormSubmit);
 
 const newCrdForm = document.forms['new-place'];
 const placeName = newCrdForm.elements['place-name'];
@@ -98,11 +79,13 @@ const pictureLink = newCrdForm.elements['link'];
 function newCrdSubmit(evt) {
   evt.preventDefault(); 
 
-  const newCard = {};
-  newCard.name = placeName.value;
-  newCard.link = pictureLink.value;
+  const newCard = {
+    name:placeName.value,
+    link:pictureLink.value
+  };
 
-  cardsList.prepend(addCard(newCard, removeCard, likeToggle, popupTypeImageCb));
+
+  cardsList.prepend(createCard(newCard, removeCard, likeToggle, popupTypeImageCb));
 
   newCrdForm.reset();
   const openedModal = document.querySelector('.popup_is-opened');
