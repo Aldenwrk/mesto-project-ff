@@ -1,31 +1,15 @@
-import { initialCards } from "./scripts/cards.js";
+import { initialCards, addCard, likeToggle, removeCard } from "./scripts/cards.js";
 import './pages/index.css';
+import {closeModal, openModal} from "./scripts/modal.js";
 const cardsList = document.querySelector('.places__list');
-
-function addCard(cardData, cardRemover, likeToggle, popupTypeImageCb) {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
-  const deleteButton = cardElement.querySelector('.card__delete-button');
-  const likeButton = cardElement.querySelector('.card__like-button');
-  const cardImage = cardElement.querySelector('.card__image');
-
-  cardElement.querySelector('.card__title').textContent = cardData.name;
-  cardImage.src = cardData.link;
-  cardImage.alt = cardData.name;
-  deleteButton.addEventListener('click',() => cardRemover(cardElement));
-  likeButton.addEventListener('click', () => likeToggle(likeButton));
-  cardImage.addEventListener('click', () => popupTypeImageCb(event));
-
-  return cardElement;
-}
-
+//берём данные из картинки при клике
 function popupTypeImageCb(event){
   const cardLink = event.target.src;
   const cardName = event.target.alt;
   popupImageCreation(cardLink, cardName);
 };
 const popupTypeImage = document.querySelector('.popup_type_image');
-
+//передаём данные картинки в попап и открываем его
 function popupImageCreation(cardLink, cardName){
   const description = document.querySelector('.popup__caption');
   const ImageInModal = document.querySelector('.popup__image');
@@ -39,15 +23,7 @@ const popups = document.querySelectorAll('.popup');
 popups.forEach((popup) => {
   popup.classList.add('popup_is-animated');
 });
-
-function likeToggle (likeButton){
-  likeButton.classList.toggle('card__like-button_is-active');
-};
-
-function removeCard (cardElement) {
-  cardElement.remove();
-}
-
+//создаём карточки из массива
 initialCards.forEach( function(cardData) {
   cardsList.append(addCard(cardData, removeCard, likeToggle, popupTypeImageCb));
 });
@@ -61,20 +37,13 @@ const closeBtns = document.querySelectorAll('.popup__close');
 //Перебираем кнопки закрытия и вешаем обработчик
 closeBtns.forEach(button =>{
   button.addEventListener('click', function(){
-    closePopup(button.closest('.popup_is-opened'));
+    closeModal(button.closest('.popup_is-opened'));
   });
 });
-//закрывалка модалок
-function closePopup(windowToClose){
-  windowToClose.classList.remove('popup_is-opened');
-};
+
 
 profileAddButton.addEventListener('click', () => openModal(popupNewCrd));
 profileEditButton.addEventListener('click', () => openModal(popupEdit));
-
- function openModal(windowToOpen){
-  windowToOpen.classList.add('popup_is-opened')
-};
 
 //закрытие по клику вне модалки
 popupNewCrd.addEventListener("click", closeOnBackDropClick);
@@ -85,7 +54,7 @@ function closeOnBackDropClick({ currentTarget, target }) {
   const dialogElement = currentTarget
   const isClickedOnBackDrop = target === dialogElement
   if (isClickedOnBackDrop) {
-   closePopup(dialogElement);
+   closeModal(dialogElement);
   }
 }
 
@@ -96,7 +65,7 @@ function closeOnEsc(event){
   if(event.key === "Escape" ){
     const openedModal = document.querySelector('.popup_is-opened');
     if(openedModal){
-      closePopup(openedModal);
+      closeModal(openedModal);
     }
   }
 };
@@ -116,7 +85,7 @@ function handleFormSubmit(evt) {
     formElement.reset();
     const openedModal = document.querySelector('.popup_is-opened');
     if(openedModal){
-      closePopup(openedModal);
+      closeModal(openedModal);
     }
 }
 
@@ -138,7 +107,7 @@ function newCrdSubmit(evt) {
   newCrdForm.reset();
   const openedModal = document.querySelector('.popup_is-opened');
   if(openedModal){
-    closePopup(openedModal);
+    closeModal(openedModal);
   }
 }
 
