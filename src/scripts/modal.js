@@ -17,6 +17,7 @@ export function openModal(windowToOpen){
 export function closeModal(windowToClose){
   document.removeEventListener("keydown", closeOnEsc);
   windowToClose.classList.remove('popup_is-opened');
+  windowToClose.querySelector('.popup__form').reset();
 };
 
 //закрытие по клику вне модалки

@@ -2,6 +2,8 @@ import { initialCards} from "./scripts/cards.js";
 import { createCard, likeToggle, removeCard } from "./scripts/card.js";
 import './pages/index.css';
 import {closeModal, openModal, closeOnBackDropClick, closeOnEsc} from "./scripts/modal.js";
+import {validationConfig, showErrorSpan, hasInvalidInput, toggleButtonState, hideErrorSpan, checkInputValidity, enableValidation, clearValidation} from "./scripts/validation.js";
+
 const cardsList = document.querySelector('.places__list');
 //берём данные из картинки при клике
 function popupTypeImageCb(event){
@@ -43,8 +45,14 @@ closeBtns.forEach(button =>{
 });
 
 
-profileAddButton.addEventListener('click', () => openModal(popupNewCrd));
-profileEditButton.addEventListener('click', () => openModal(popupEdit));
+profileAddButton.addEventListener('click', () => {
+  openModal(popupNewCrd);
+  clearValidation(popupNewCrd.querySelector('.popup__form'), validationConfig);
+});
+profileEditButton.addEventListener('click', () => {
+  openModal(popupEdit);
+  clearValidation(popupEdit.querySelector('.popup__form'), validationConfig);
+});
 
 
 popupNewCrd.addEventListener("click", closeOnBackDropClick);
@@ -98,84 +106,6 @@ newCrdForm.addEventListener('submit', newCrdSubmit);
 
 //7пр
 
-const form = document.querySelector('.popup__form');
-const inputList = Array.from(form.querySelectorAll('.popup__input'));
-const buttonElement = form.querySelector('.popup__button');
+enableValidation(validationConfig);
 
-startValidation();
 
-function startValidation(){
-  toggleButton();
-
-  form.addEventListener('submit', (event) =>{
-    event.preventDefault()
-  })
-
-  inputList.forEach((inputElement)=> {
-    inputElement.addEventListener('input', ()=>{
-      checkInputValidity(inputElement)
-      toggleButton()
-    })
-  })
-};
-
-function checkInputValidity(inputElement){
-  if(inputElement.validity.patternMismatch){
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  }else{
-    inputElement.setCustomValidity("");
-  }
-  if(!inputElement.validity.valid){
-    showErrorSpan(inputElement, inputElement.validationMessage)
-  }else{
-    hideErrorSpan(inputElement)
-  }
-};
-
-function toggleButton(){
-  if(hasInvalidInput()){
-    buttonElement.classList.add('popup__button_inactive')
-  }else{
-    buttonElement.classList.remove('popup__button_inactive')
-  }
-}
-
-function hasInvalidInput(){
-  return inputList.some((inputElement)=>{
-    return !inputElement.validity.valid
-  })
-}
-
-function showErrorSpan(inputElement, errorMessage){
-  const errorElement = document.querySelector(`.${inputElement.id}-error`);
-
-    inputElement.classList.add('popup__input-error');
-    errorElement.textContent = errorMessage;
-    errorElement.classList.add('span__input-error_active');
-}
-
-function hideErrorSpan(inputElement){
-  const errorElement = document.querySelector(`.${inputElement.id}-error`);
-
-    inputElement.classList.remove('popup__input-error');
-    errorElement.textContent = '';
-    errorElement.classList.remove('span__input-error_active');
-}
-
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: '.popup__button_inactive',
-  inputErrorClass: '.popup__input-error',
-  errorClass: '.span__input-error_active'
-};
-
-function clearValidation(form, validationConfig){
- const inputErrors = Array.from(form.querySelectorAll(validationConfig.inputErrorClass));
- inputErrors.forEach((input) =>{
-  hideErrorSpan(input);
- });
-
- 
-}
