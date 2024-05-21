@@ -10,6 +10,10 @@
   margin-bottom: 10px;
 }
 
+label {
+  position: relative;
+}
+
 .popup__input:last-of-type {
   margin-bottom: 0;
 }
@@ -20,3 +24,30 @@
     line-height: 15px;
   }
 }
+/*Валидация инпутов, раскидать по нужным файлам*/
+/*инпут не прошедший валидацию*/
+.popup__input-error {
+  border-block-end: 1px solid #ff0000;
+}
+/*спан с сообщением ошибки*/
+/*.span__input-error {
+display: none;
+}*/
+
+.span__input-error_active {
+  color: #ff0000;
+ /* position: absolute;
+  left: 0;
+  top: 20px;
+  z-index:1;
+    display: block;*/
+  font-size: 12px;
+  line-height: 14px;
+
+}
+
+.form__set {
+  border: none;
+}
+
+
