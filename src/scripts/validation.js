@@ -2,17 +2,17 @@ export const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
   submitButtonSelector: '.popup__button',
-  inactiveButtonClass: '.popup__button_inactive',
-  inputErrorClass: '.popup__input-error',
-  errorClass: '.span__input-error_active'
+  inactiveButtonClass: 'popup__button_inactive',
+  inputErrorClass: 'popup__input-error',
+  errorClass: 'span__input-error_active'
 };
 
-export function showErrorSpan(formElement, inputElement, errorMessage){
+export function showErrorSpan(formElement, inputElement, errorMessage, validationConfig){
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
 
-    inputElement.classList.add('popup__input-error');
+    inputElement.classList.add(validationConfig.inputErrorClass);
     errorElement.textContent = errorMessage;
-    errorElement.classList.add('span__input-error_active');
+    errorElement.classList.add(validationConfig.errorClass);
 };
 
 export const hasInvalidInput = (inputList) =>{
@@ -21,19 +21,19 @@ export const hasInvalidInput = (inputList) =>{
   });
 };
 
-export function toggleButtonState(inputList, buttonElement){
+export function toggleButtonState(inputList, buttonElement, validationConfig){
   if(hasInvalidInput(inputList)){
-    buttonElement.classList.add('popup__button_inactive')
+    buttonElement.classList.add(validationConfig.inactiveButtonClass)
   }else{
-    buttonElement.classList.remove('popup__button_inactive')
+    buttonElement.classList.remove(validationConfig.inactiveButtonClass)
   }
 };
 
-export function hideErrorSpan(formElement, inputElement){
+export function hideErrorSpan(formElement, inputElement, validationConfig){
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
 
-    inputElement.classList.remove('popup__input-error');
-    errorElement.classList.remove('span__input-error_active');
+    inputElement.classList.remove(validationConfig.inputErrorClass);
+    errorElement.classList.remove(validationConfig.errorClass);
     errorElement.textContent = '';
 };
 
@@ -44,9 +44,9 @@ export function checkInputValidity(formElement, inputElement){
     inputElement.setCustomValidity("");
   }
   if(!inputElement.validity.valid){
-    showErrorSpan(formElement, inputElement, inputElement.validationMessage)
+    showErrorSpan(formElement, inputElement, inputElement.validationMessage, validationConfig)
   }else{
-    hideErrorSpan(formElement, inputElement)
+    hideErrorSpan(formElement, inputElement, validationConfig)
   }
 };
 
@@ -59,23 +59,23 @@ export function enableValidation(validationConfig){
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
 
-    toggleButtonState(inputList, buttonElement);
+    toggleButtonState(inputList, buttonElement, validationConfig);
     inputList.forEach((inputElement)=> {
       inputElement.addEventListener('input', ()=>{
         checkInputValidity(formElement, inputElement)
-        toggleButtonState(inputList, buttonElement);
+        toggleButtonState(inputList, buttonElement, validationConfig);
     })
   })
 });
 };
 
 export function clearValidation(formElement, validationConfig){
-  const inputErrors = Array.from(formElement.querySelectorAll(validationConfig.inputErrorClass));
+  const inputErrors = Array.from(formElement.querySelectorAll('.popup__input-error'));
   console.log(inputErrors);
   inputErrors.forEach((inputElement) =>{
-   hideErrorSpan(formElement, inputElement);
+   hideErrorSpan(formElement, inputElement, validationConfig);
   });
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  toggleButtonState(inputList, buttonElement);
+  toggleButtonState(inputList, buttonElement, validationConfig);
  }
