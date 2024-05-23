@@ -27,9 +27,9 @@ popups.forEach((popup) => {
   popup.classList.add('popup_is-animated');
 });
 //создаём карточки из массива
-initialCards.forEach( function(cardData) {
+/*initialCards.forEach( function(cardData) {
   cardsList.append(createCard(cardData, removeCard, likeToggle, popupTypeImageCb));
-});
+});*/
 
 const profileAddButton = document.querySelector('.profile__add-button');
 const profileEditButton = document.querySelector('.profile__edit-button');
@@ -67,9 +67,28 @@ const jobInput = profileEditFormElement.elements['description'];
 function profileEditFormSubmit(evt) {
     evt.preventDefault(); 
     let profileName = document.querySelector('.profile__title');
-    profileName.textContent = nameInput.value;
     let profileDescr = document.querySelector('.profile__description');
-    profileDescr.textContent = jobInput.value;
+
+//апдейт
+fetch('https://nomoreparties.co/v1/wff-cohort-13/users/me', {
+      method: 'PATCH',
+      headers: {
+        authorization: 'b3000371-daae-4193-a69c-238bf82131cf',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: nameInput.value,
+        about: jobInput.value
+      })
+    })
+    .then((res)=>{
+      return res.json();
+    })
+    .then((res)=>{
+      console.log(res);
+    profileName.textContent = res.name;
+    profileDescr.textContent = res.about;
+    })
 
     profileEditFormElement.reset();
     const openedModal = document.querySelector('.popup_is-opened');
@@ -108,4 +127,53 @@ newCrdForm.addEventListener('submit', newCrdSubmit);
 
 enableValidation(validationConfig);
 
+/*fetch('https://nomoreparties.co/v1/wff-cohort-13/cards', {
+  headers: {
+    authorization: 'b3000371-daae-4193-a69c-238bf82131cf'
+  }
+})
+  .then(res => res.json())
+  .then((result) => {
+    console.log(result);
+  }); */
+let userId;
+
+const loadProfileData = fetch('https://nomoreparties.co/v1/wff-cohort-13/users/me', {
+      headers: {
+    authorization: 'b3000371-daae-4193-a69c-238bf82131cf'
+  }
+  })
+    .then(res => res.json())
+  .then((result) => {
+    //console.log(result);
+    return result
+  })
+  .then((result) => {
+    document.querySelector('.profile__title').textContent = result.name;
+    document.querySelector('.profile__description').textContent = result.about;
+    document.querySelector('.profile__image').style.backgroundImage = "url('"+result.avatar+"')";
+    userId = result._id;
+   // console.log(userId);
+    return result
+  });
+
+
+const loadCardsFromServer = fetch('https://nomoreparties.co/v1/wff-cohort-13/cards', {
+    headers: {
+  authorization: 'b3000371-daae-4193-a69c-238bf82131cf'
+}
+})
+  .then(res => res.json())
+.then((result) => {
+  //console.log(result);
+  return result
+});
+
+Promise.all([loadProfileData, loadCardsFromServer])
+loadCardsFromServer.then((cardsArray) =>{
+  console.log(cardsArray);
+  cardsArray.forEach( function(cardData) {
+    cardsList.append(createCard(cardData, removeCard, likeToggle, popupTypeImageCb, userId));
+  })
+});
 

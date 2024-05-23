@@ -1,4 +1,4 @@
-export function createCard(cardData, cardRemover, likeToggle, popupTypeImageCb) {
+export function createCard(cardData, cardRemover, likeToggle, popupTypeImageCb, userId) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const deleteButton = cardElement.querySelector('.card__delete-button');
@@ -8,9 +8,15 @@ export function createCard(cardData, cardRemover, likeToggle, popupTypeImageCb) 
   cardElement.querySelector('.card__title').textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
-  deleteButton.addEventListener('click',() => cardRemover(cardElement));
+  
   likeButton.addEventListener('click', () => likeToggle(likeButton));
   cardImage.addEventListener('click', () => popupTypeImageCb(event));
+
+  if(userId==cardData.owner._id){
+    deleteButton.addEventListener('click',() => cardRemover(cardElement));
+  }else{
+    deleteButton.style.display = "none";
+  }
 
   return cardElement;
 };
