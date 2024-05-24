@@ -61,9 +61,20 @@ const jobInput = profileEditFormElement.elements['description'];
 // Обработчик отправки формы с новыми данными профиля
 function profileEditFormSubmit(evt) {
     evt.preventDefault(); 
+    const profileName = document.querySelector('.profile__title');
+    const profileDescr = document.querySelector('.profile__description');
     profileEditFormElement.querySelector('.button').textContent = "Сохранение..."
 //апдейт
-  profileEditDataRequest();
+  profileEditDataRequest().then((res)=>{
+    profileName.textContent = res.name;
+    profileDescr.textContent = res.about;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(function(){
+      profileEditFormElement.querySelector('.button').textContent = "Сохранить"
+    });
 
     profileEditFormElement.reset();
     const openedModal = document.querySelector('.popup_is-opened');
@@ -106,7 +117,6 @@ enableValidation(validationConfig);
 //когда есть оба запроса собираем карточки
 Promise.all([loadProfileData(), loadCardsFromServer()])
 loadCardsFromServer().then((cardsArray) =>{
-  console.log(cardsArray);
   cardsArray.forEach( function(cardData) {
     cardsList.append(createCard(cardData, removeCard, likeToggle, popupTypeImageCb, userId, checkIdInLikes));
   })
@@ -131,7 +141,15 @@ const avatarSubmit = (evt) =>{
 
   avatarChangeForm.querySelector('.button').textContent = "Сохранение..."
 
-    newAvatarRequest();
+    newAvatarRequest()  .then((res)=>{
+      document.querySelector('.profile__image').style.backgroundImage = "url('"+res.avatar+"')";
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(function(){
+      avatarChangeForm.querySelector('.button').textContent = "Сохранить"
+    });
 
   profileEditFormElement.reset();
     const openedModal = document.querySelector('.popup_is-opened');

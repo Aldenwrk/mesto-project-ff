@@ -42,7 +42,7 @@ return Promise.reject(`Ошибка: ${res.status}`);
   console.log(err);
 })
  };
-//функцию удаления карточки переписал в запрос, так что теперь она тут
+//функцию удаления карточки переписал в запрос, не совсем понял по чеклисту можно ли
  export const removeCard =(cardElement, cardId) =>{
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
      method: 'DELETE',
@@ -53,14 +53,15 @@ return Promise.reject(`Ошибка: ${res.status}`);
    .then((res)=>{
     if(res.ok){
      cardElement.remove();
+    }else{
+      return Promise.reject(`Ошибка: ${res.status}`);
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
+    
    });
  }
 //запрос с информацией профиля
 export const profileEditDataRequest=()=>{
-  const profileName = document.querySelector('.profile__title');
-  const profileDescr = document.querySelector('.profile__description');
+
   const profileEditFormElement = document.forms['edit-profile'];
   const nameInput = profileEditFormElement.elements['name'];
   const jobInput = profileEditFormElement.elements['description'];
@@ -82,16 +83,7 @@ export const profileEditDataRequest=()=>{
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   })
-  .then((res)=>{
-  profileName.textContent = res.name;
-  profileDescr.textContent = res.about;
-  })
-  .catch((err) => {
-    console.log(err);
-  })
-  .finally(function(){
-    profileEditFormElement.querySelector('.button').textContent = "Сохранить"
-  });
+
 };
 //запрос с новой карточкой
 export const newCardRequest =()=>{
@@ -176,13 +168,4 @@ export const newAvatarRequest =()=>{
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   })
-  .then((res)=>{
-    document.querySelector('.profile__image').style.backgroundImage = "url('"+res.avatar+"')";
-  })
-  .catch((err) => {
-    console.log(err);
-  })
-  .finally(function(){
-    avatarChangeForm.querySelector('.button').textContent = "Сохранить"
-  });
 };
