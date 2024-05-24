@@ -83,7 +83,6 @@ export const profileEditDataRequest=()=>{
     return Promise.reject(`Ошибка: ${res.status}`);
   })
   .then((res)=>{
-    console.log(res);
   profileName.textContent = res.name;
   profileDescr.textContent = res.about;
   })
@@ -138,7 +137,6 @@ export const loadProfileData =() =>{
   document.querySelector('.profile__description').textContent = result.about;
   document.querySelector('.profile__image').style.backgroundImage = "url('"+result.avatar+"')";
   userId = result._id;
-  console.log(userId);
   return result
 });
 } 
