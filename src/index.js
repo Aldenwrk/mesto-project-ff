@@ -123,15 +123,19 @@ enableValidation(validationConfig);
 
 //когда есть оба запроса собираем карточки
 Promise.all([loadProfileData(), loadCardsFromServer()])
-loadProfileData().then((result) => {
-  document.querySelector('.profile__title').textContent = result.name;
-  document.querySelector('.profile__description').textContent = result.about;
-  document.querySelector('.profile__image').style.backgroundImage = "url('"+result.avatar+"')";
-  userId = result._id;
+/*.then((res)=>{
+  console.log(res)
+  return res
+})*/
+.then((result) => {
+  document.querySelector('.profile__title').textContent = result[0].name;
+  document.querySelector('.profile__description').textContent = result[0].about;
+  document.querySelector('.profile__image').style.backgroundImage = "url('"+result[0].avatar+"')";
+  userId = result[0]._id;
   return result
 })
-loadCardsFromServer().then((cardsArray) =>{
-  cardsArray.forEach( function(cardData) {
+.then((result) =>{
+  result[1].forEach( function(cardData) {
     cardsList.append(createCard(cardData, removeCard, likeToggle, collectImageData, userId, checkIdInLikes));
   })
 })

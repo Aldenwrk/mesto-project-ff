@@ -9,11 +9,13 @@ export function createCard(cardData, cardRemover, likeToggle, collectImageData, 
   const cardImage = cardElement.querySelector('.card__image');
   const cardId = cardData._id;
 
+  
+
   cardElement.querySelector('.card__title').textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
   likeCounter.textContent = cardData.likes.length;
-
+  
   if(checkIdInLikes(cardData, userId)==true){
     likeButton.classList.add('card__like-button_is-active');
   };
