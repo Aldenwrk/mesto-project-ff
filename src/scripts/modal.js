@@ -1,17 +1,6 @@
 export function openModal(windowToOpen){
   windowToOpen.classList.add('popup_is-opened')
   document.addEventListener("keydown", closeOnEsc);
-
-    if(windowToOpen.classList.contains('popup_type_edit')){
-      const profileEditFormElement = document.forms['edit-profile'];
-      const nameInput = profileEditFormElement.elements['name'];
-      const jobInput = profileEditFormElement.elements['description'];
-
-      let profileName = document.querySelector('.profile__title');
-      nameInput.value = profileName.textContent;
-      let profileDescr = document.querySelector('.profile__description');
-      jobInput.value = profileDescr.textContent;
-    }
 };
 
 export function closeModal(windowToClose){

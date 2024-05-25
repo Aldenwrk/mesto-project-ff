@@ -70,7 +70,7 @@ export function enableValidation(validationConfig){
 };
 
 export function clearValidation(formElement, validationConfig){
-  const inputErrors = Array.from(formElement.querySelectorAll('.popup__input-error'));
+  const inputErrors = Array.from(formElement.querySelectorAll(`.${validationConfig.inputErrorClass}`));
   inputErrors.forEach((inputElement) =>{
    hideErrorSpan(formElement, inputElement, validationConfig);
   });

@@ -1,6 +1,6 @@
-import { addLike, deleteLike} from "./api.js";
+import { addLike, deleteLike, removeCardRequest} from "./api.js";
 
-export function createCard(cardData, cardRemover, likeToggle, popupTypeImageCb, userId, checkIdInLikes) {
+export function createCard(cardData, cardRemover, likeToggle, collectImageData, userId, checkIdInLikes) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const deleteButton = cardElement.querySelector('.card__delete-button');
@@ -19,7 +19,7 @@ export function createCard(cardData, cardRemover, likeToggle, popupTypeImageCb, 
   };
   
   likeButton.addEventListener('click', () => likeToggle(likeButton, cardData, userId, cardId, likeCounter));
-  cardImage.addEventListener('click', () => popupTypeImageCb(event));
+  cardImage.addEventListener('click', () => collectImageData(event));
 
   if(userId==cardData.owner._id){
     deleteButton.addEventListener('click',() => cardRemover(cardElement, cardId));
@@ -54,6 +54,11 @@ export const checkIdInLikes = (cardData, userId)=>{
   });
 };
 
+export const removeCard=(cardElement, cardId)=>{
+  removeCardRequest(cardId).then((res)=>{
+    cardElement.remove();
+  })
+}
 
 
 

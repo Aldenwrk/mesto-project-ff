@@ -1,10 +1,19 @@
-export let userId;
+
 
 const config = {
   baseUrl: `https://nomoreparties.co/v1/wff-cohort-13`,
   authorization: 'b3000371-daae-4193-a69c-238bf82131cf',
   ContentType: 'application/json'
 }
+
+const checkResponse = (res) => {
+    if(res.ok){
+    return res.json()
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
+  
+};
+
 
 //отправляем запрос с лайком
 export const addLike =(cardId)=>{
@@ -14,12 +23,7 @@ export const addLike =(cardId)=>{
      authorization: `${config.authorization}`
    }
  })
-   .then((res) => {
-    if(res.ok){
-    return res.json()
-  }
-  return Promise.reject(`Ошибка: ${res.status}`);
-  })
+   .then(res => checkResponse(res))
   .catch((err) => {
     console.log(err);
   })
@@ -32,40 +36,23 @@ export const addLike =(cardId)=>{
      authorization: `${config.authorization}`
    }
  })
- .then((res) => {
-  if(res.ok){
-  return res.json()
-}
-return Promise.reject(`Ошибка: ${res.status}`);
-})
+ .then(res => checkResponse(res))
 .catch((err) => {
   console.log(err);
 })
  };
-//функцию удаления карточки переписал в запрос, не совсем понял по чеклисту можно ли
- export const removeCard =(cardElement, cardId) =>{
+
+ export const removeCardRequest =(cardId) =>{
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
      method: 'DELETE',
    headers: {
      authorization: `${config.authorization}`
    }
  })
-   .then((res)=>{
-    if(res.ok){
-     cardElement.remove();
-    }else{
-      return Promise.reject(`Ошибка: ${res.status}`);
-    }
-    
-   });
+ .then(res => checkResponse(res))
  }
 //запрос с информацией профиля
-export const profileEditDataRequest=()=>{
-
-  const profileEditFormElement = document.forms['edit-profile'];
-  const nameInput = profileEditFormElement.elements['name'];
-  const jobInput = profileEditFormElement.elements['description'];
-
+export const requestProfileEditData=()=>{
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {
@@ -77,19 +64,13 @@ export const profileEditDataRequest=()=>{
       about: jobInput.value
     })
   })
-  .then((res)=>{
-    if(res.ok){
-    return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-
+  .then(res => checkResponse(res))
 };
 //запрос с новой карточкой
-export const newCardRequest =()=>{
-  const newCrdForm = document.forms['new-place'];
+export const requestNewCard =(placeName, pictureLink)=>{
+  /*const newCrdForm = document.forms['new-place'];
   const placeName = newCrdForm.querySelector('.popup__input_type_card-name').value;
-  const pictureLink = newCrdForm.querySelector('.popup__input_type_url').value;
+  const pictureLink = newCrdForm.querySelector('.popup__input_type_url').value;*/
 
   return  fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
@@ -102,12 +83,7 @@ export const newCardRequest =()=>{
       link: pictureLink
     })
   })
-  .then((res)=>{
-    if(res.ok){
-    return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 
 };
 
@@ -118,19 +94,7 @@ export const loadProfileData =() =>{
   authorization: `${config.authorization}`
 }
 })
-.then((res)=>{
-  if(res.ok){
-  return res.json();
-  }
-  return Promise.reject(`Ошибка: ${res.status}`);
-})
-.then((result) => {
-  document.querySelector('.profile__title').textContent = result.name;
-  document.querySelector('.profile__description').textContent = result.about;
-  document.querySelector('.profile__image').style.backgroundImage = "url('"+result.avatar+"')";
-  userId = result._id;
-  return result
-});
+.then(res => checkResponse(res))
 } 
 
 //получаем карточки
@@ -140,18 +104,13 @@ export const loadCardsFromServer = () =>{
   authorization: `${config.authorization}`
 }
 })
-.then((res)=>{
-  if(res.ok){
-  return res.json();
-  }
-  return Promise.reject(`Ошибка: ${res.status}`);
-})
+.then(res => checkResponse(res))
 } 
 //запрашиваем и обновляем аватар
-export const newAvatarRequest =()=>{
-  const avatarChangePopup = document.querySelector('.popup_type_avatar_edit');
-  const avatarChangeForm = avatarChangePopup.querySelector('.popup__form');
-  const newAvatar = avatarChangeForm.elements.avatarLink.value;
+export const requestNewAvatar =(newAvatar)=>{
+ /* const avatarChangePopup = document.querySelector('.popup_type_avatar_edit');
+  const avatarChangeForm = avatarChangePopup.querySelector('.popup__form');*/
+
  return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: {
@@ -162,10 +121,5 @@ export const newAvatarRequest =()=>{
       avatar: newAvatar
     })
   })
-  .then((res)=>{
-    if(res.ok){
-    return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(res => checkResponse(res))
 };
