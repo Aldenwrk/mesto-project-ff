@@ -6,10 +6,6 @@ export function openModal(windowToOpen){
 export function closeModal(windowToClose){
   document.removeEventListener("keydown", closeOnEsc);
   windowToClose.classList.remove('popup_is-opened');
-  const popupTypeImage = document.querySelector('.popup_type_image');
-  if(windowToClose!==popupTypeImage){
-  windowToClose.querySelector('.popup__form').reset();
-}
 };
 
 //закрытие по клику вне модалки

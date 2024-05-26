@@ -52,7 +52,7 @@ export const addLike =(cardId)=>{
  .then(res => checkResponse(res))
  }
 //запрос с информацией профиля
-export const requestProfileEditData=()=>{
+export const requestProfileEditData=(nameInput, jobInput)=>{
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: {

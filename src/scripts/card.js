@@ -36,17 +36,23 @@ export function likeToggle (likeButton, cardData, userId, cardId, likeCounter){
   if(likeButton.classList.contains('card__like-button_is-active')){
     deleteLike(cardId).then((res)=>{
       likeCounter.textContent = res.likes.length;
-    }).catch((err) => {
+    })
+    .then((res)=>{
+      likeButton.classList.remove('card__like-button_is-active');
+    })
+    .catch((err) => {
       console.log(err);
-    }); 
-    likeButton.classList.remove('card__like-button_is-active');   
+    });   
   }else{
     addLike(cardId).then((res)=>{
       likeCounter.textContent = res.likes.length;
-    }).catch((err) => {
+    })
+    .then((res)=>{
+      likeButton.classList.add('card__like-button_is-active');
+    })
+    .catch((err) => {
       console.log(err);
-    }); 
-    likeButton.classList.add('card__like-button_is-active');
+    });
   }  
 };
 
@@ -59,7 +65,9 @@ export const checkIdInLikes = (cardData, userId)=>{
 export const removeCard=(cardElement, cardId)=>{
   removeCardRequest(cardId).then((res)=>{
     cardElement.remove();
-  })
+  }).catch((err) => {
+    console.log(err);
+  });
 }
 
 

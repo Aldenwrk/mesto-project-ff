@@ -15,10 +15,11 @@ export function collectImageData(event){
   createPopupTypeImage(cardLink, cardName);
 };
 const popupTypeImage = document.querySelector('.popup_type_image');
+const description = document.querySelector('.popup__caption');
+const imageInModal = document.querySelector('.popup__image');
 //передаём данные картинки в попап и открываем его
 function createPopupTypeImage(cardLink, cardName){
-  const description = document.querySelector('.popup__caption');
-  const imageInModal = document.querySelector('.popup__image');
+
   openModal(popupTypeImage);
   imageInModal.src = cardLink;
   imageInModal.alt = cardName;
@@ -39,20 +40,31 @@ const closeBtns = document.querySelectorAll('.popup__close');
 //Перебираем кнопки закрытия и вешаем обработчик
 closeBtns.forEach(button =>{
   button.addEventListener('click', function(){
-    closeModal(button.closest('.popup_is-opened'));
+    const popupToClose = button.closest('.popup_is-opened');
+    closeModal(popupToClose);
+/*      if(popupToClose!==popupTypeImage){
+        popupToClose.querySelector('.popup__form').reset();
+}*/
   });
 });
 
 profileAddButton.addEventListener('click', () => {
+  newCrdForm.reset();
+  clearValidation(newCrdForm, validationConfig);
   openModal(popupNewCrd);
-  clearValidation(popupNewCrd.querySelector('.popup__form'), validationConfig);
 });
+
+const profileName = document.querySelector('.profile__title');
+const profileDescr = document.querySelector('.profile__description');
+
 profileEditButton.addEventListener('click', () => {
+  profileEditFormElement.reset();
+  clearValidation(profileEditFormElement, validationConfig);
   openModal(popupEdit);
-  clearValidation(popupEdit.querySelector('.popup__form'), validationConfig);
-  let profileName = document.querySelector('.profile__title');
+
+
   nameInput.value = profileName.textContent;
-  let profileDescr = document.querySelector('.profile__description');
+
   jobInput.value = profileDescr.textContent;
 });
 
@@ -64,8 +76,7 @@ const profileEditFormElement = document.forms['edit-profile'];
 const nameInput = profileEditFormElement.elements['name'];
 const jobInput = profileEditFormElement.elements['description'];
 
-const profileName = document.querySelector('.profile__title');
-const profileDescr = document.querySelector('.profile__description');
+
 const profileEditSubmit = profileEditFormElement.querySelector('.button');
 
 // Обработчик отправки формы с новыми данными профиля
@@ -74,17 +85,19 @@ function handleProfileEditFormSubmit(evt) {
 
     profileEditSubmit.textContent = "Сохранение..."
 //апдейт
-requestProfileEditData().then((res)=>{
+requestProfileEditData(nameInput, jobInput).then((res)=>{
     profileName.textContent = res.name;
     profileDescr.textContent = res.about;
+    })
+    .then((res)=>{
+      profileEditFormElement.reset();   
+      closeModal(popupEdit);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(function(){
       profileEditSubmit.textContent = "Сохранить"
-      profileEditFormElement.reset();   
-      closeModal(popupEdit);
     });   
 }
 
@@ -104,13 +117,15 @@ newCrdFormSubmit.textContent = "Сохранение..."
   requestNewCard(placeName, pictureLink).then((res)=>{
     cardsList.prepend(createCard(res, removeCard, likeToggle, collectImageData, userId, checkIdInLikes));
   })
+  .then((res)=>{
+    newCrdForm.reset();
+    closeModal(popupNewCrd);
+  })
   .catch((err) => {
     console.log(err);
   })
   .finally(function(){
     newCrdFormSubmit.textContent = "Сохранить"
-    newCrdForm.reset();
-    closeModal(popupNewCrd);
   });
 
 
@@ -128,9 +143,9 @@ Promise.all([loadProfileData(), loadCardsFromServer()])
   return res
 })*/
 .then((result) => {
-  document.querySelector('.profile__title').textContent = result[0].name;
-  document.querySelector('.profile__description').textContent = result[0].about;
-  document.querySelector('.profile__image').style.backgroundImage = "url('"+result[0].avatar+"')";
+  profileName.textContent = result[0].name;
+  profileDescr.textContent = result[0].about;
+  avatarElement.style.backgroundImage = "url('"+result[0].avatar+"')";
   userId = result[0]._id;
   return result
 })
@@ -150,8 +165,9 @@ const avatarChangeForm = avatarChangePopup.querySelector('.popup__form');
 const avatarChangeFormSubmit = avatarChangeForm.querySelector('.button');
 
 avatarElement.addEventListener('click', ()=>{
-  openModal(avatarChangePopup);
+  avatarChangeForm.reset();
   clearValidation(avatarChangeForm, validationConfig);
+  openModal(avatarChangePopup);
 });
 avatarChangePopup.addEventListener("click", closeOnBackDropClick);
 
@@ -162,15 +178,17 @@ const avatarSubmit = (evt) =>{
   avatarChangeFormSubmit.textContent = "Сохранение..."
 
   requestNewAvatar(newAvatar)  .then((res)=>{
-      document.querySelector('.profile__image').style.backgroundImage = "url('"+res.avatar+"')";
+    avatarElement.style.backgroundImage = "url('"+res.avatar+"')";
+    })
+    .then((res)=>{
+      profileEditFormElement.reset();
+      closeModal(avatarChangePopup);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(function(){
       avatarChangeFormSubmit.textContent = "Сохранить"
-      profileEditFormElement.reset();
-      closeModal(avatarChangePopup);
     });
 
 
